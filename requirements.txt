@@ -1,0 +1,24 @@
+# Core dependencies for OneStream Knowledge Agent System
+openai>=1.12.0
+beautifulsoup4>=4.12.0
+requests>=2.31.0
+selenium>=4.15.0
+trafilatura>=1.6.0
+
+# Vector DB and embeddings
+chromadb>=0.4.22
+sentence-transformers>=2.3.0
+faiss-cpu>=1.7.4
+
+# Data processing
+pandas>=2.1.0
+numpy>=1.24.0
+python-dotenv>=1.0.0
+
+# PDF processing
+PyPDF2>=3.0.0
+pdfplumber>=0.10.0
+
+# Async and utilities
+aiohttp>=3.9.0
+tqdm>=4.66.0
