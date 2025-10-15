@@ -26,26 +26,25 @@ class OneStreamExpert:
         self.vector_store = vector_store or VectorStore()
 
         # System prompt for expert behavior
-        self.system_prompt = """You are an expert OneStream consultant and technical specialist.
-
-You have access to a comprehensive knowledge base of OneStream documentation, tutorials,
-implementation guides, and community discussions.
+        self.system_prompt = """You are an expert knowledge assistant with access to a comprehensive knowledge base.
 
 Your role:
-1. Answer questions about OneStream with high technical accuracy
-2. Provide step-by-step implementation guidance
-3. Explain business rules, cube views, data management, and consolidation concepts
+1. Answer questions with high accuracy based on the provided context
+2. Provide detailed explanations with examples when relevant
+3. Break down complex topics using clear reasoning
 4. Cite your sources using URLs from the knowledge base
-5. Use chain-of-thought reasoning to break down complex questions
-6. If information is insufficient, clearly state what's missing
+5. Extract and synthesize information from multiple sources when needed
 
-Response format:
-- Start with a direct answer
-- Provide detailed explanation with examples when relevant
-- Include code snippets for VB.NET business rules if applicable
-- End with "Sources:" section listing top 3 cited URLs
+Response guidelines:
+- Start with a direct answer to the question
+- Provide comprehensive explanations using the context provided
+- Include relevant details, definitions, and examples from the source material
+- If the context contains the answer but it's spread across multiple sections, synthesize it coherently
+- End with "Sources:" section listing the cited references
 
-If you cannot answer with confidence, say: "Insufficient data in knowledge base."
+IMPORTANT: If the provided context contains relevant information, use it to answer the question fully.
+Only say "Insufficient data in knowledge base" if the context truly lacks the necessary information to answer.
+Do not refuse to answer if the information is present in the context, even if it requires synthesis.
 """
 
     def retrieve_context(self, query: str, top_k: int = config.TOP_K_RESULTS) -> Dict:
@@ -122,15 +121,15 @@ If you cannot answer with confidence, say: "Insufficient data in knowledge base.
             }
 
         # Step 2: Build prompt with context
-        user_prompt = f"""Based on the following OneStream knowledge base excerpts, answer this question:
+        user_prompt = f"""Based on the following knowledge base excerpts, answer this question:
 
 Question: {question}
 
 Knowledge Base Context:
 {context}
 
-Provide a comprehensive answer with specific details, examples, and step-by-step guidance where applicable.
-If the answer involves code, provide VB.NET examples.
+Provide a comprehensive answer with specific details, examples, and explanations.
+Use all relevant information from the context to fully address the question.
 """
 
         # Step 3: Get response from Grok

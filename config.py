@@ -30,8 +30,8 @@ REQUEST_TIMEOUT = 30
 CRAWL_DELAY = 1  # seconds between requests
 
 # Chunking settings
-CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 1000))
-CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 200))
+CHUNK_SIZE = int(os.getenv("CHUNK_SIZE", 2000))  # Increased for better context
+CHUNK_OVERLAP = int(os.getenv("CHUNK_OVERLAP", 400))  # Increased overlap
 
 # Vector DB settings
 VECTOR_DB_PATH = "./onestream_vectordb"
@@ -41,5 +41,5 @@ EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 KB_OUTPUT_PATH = "./onestream_kb.json"
 
 # RAG settings
-TOP_K_RESULTS = 5
-CONTEXT_WINDOW = 3  # Number of chunks to include in context
+TOP_K_RESULTS = 8  # Retrieve more candidates
+CONTEXT_WINDOW = 6  # Use more chunks in context for better coverage
