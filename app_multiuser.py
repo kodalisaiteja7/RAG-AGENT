@@ -36,7 +36,7 @@ st.set_page_config(
     page_title="Enterprise RAG System",
     page_icon="🤖",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="auto"  # Auto-collapse on mobile
 )
 
 # Custom CSS for professional styling
@@ -173,6 +173,260 @@ st.markdown("""
 
     .login-header p {
         color: #6B7280;
+    }
+
+    /* ============================================
+       RESPONSIVE DESIGN - Mobile & Tablet
+       ============================================ */
+
+    /* Tablet styles (768px - 1024px) */
+    @media screen and (max-width: 1024px) {
+        .main-header {
+            padding: 1.5rem;
+        }
+
+        .main-header h1 {
+            font-size: 2rem;
+        }
+
+        .main-header p {
+            font-size: 1rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Mobile styles (max-width: 768px) */
+    @media screen and (max-width: 768px) {
+        /* Header adjustments */
+        .main-header {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+
+        .main-header h1 {
+            font-size: 1.5rem;
+            line-height: 1.3;
+        }
+
+        .main-header p {
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        /* User badge mobile optimization */
+        .user-badge {
+            padding: 0.5rem 1rem;
+            margin-top: 0.75rem;
+            font-size: 0.85rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .user-badge .role {
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+        }
+
+        /* Stat cards mobile */
+        .stat-card {
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-card h3 {
+            font-size: 0.75rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.75rem;
+        }
+
+        /* Chat messages mobile */
+        .stChatMessage {
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-radius: 8px;
+        }
+
+        /* Buttons mobile - larger touch targets */
+        .stButton>button {
+            padding: 0.75rem 1rem !important;
+            font-size: 0.95rem !important;
+            min-height: 44px;
+        }
+
+        /* Login form mobile */
+        .login-container {
+            max-width: 100%;
+            margin: 1rem;
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .login-header h1 {
+            font-size: 1.75rem;
+        }
+
+        .login-header p {
+            font-size: 0.9rem;
+        }
+
+        /* Form inputs mobile */
+        .stTextInput input,
+        .stSelectbox select {
+            font-size: 16px !important; /* Prevents zoom on iOS */
+            padding: 0.75rem !important;
+        }
+
+        /* File uploader mobile */
+        .stFileUploader {
+            font-size: 0.9rem;
+        }
+
+        /* Tabs mobile */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 0.5rem;
+        }
+
+        .stTabs [data-baseweb="tab"] {
+            padding: 0.5rem 0.75rem;
+            font-size: 0.9rem;
+        }
+
+        /* Expander mobile */
+        .stExpander {
+            border-radius: 8px;
+        }
+
+        .stExpander summary {
+            font-size: 0.9rem;
+            padding: 0.75rem;
+        }
+
+        /* Metrics mobile */
+        .stMetric {
+            padding: 0.5rem;
+        }
+
+        .stMetric label {
+            font-size: 0.8rem;
+        }
+
+        .stMetric [data-testid="stMetricValue"] {
+            font-size: 1.25rem;
+        }
+
+        /* Sidebar mobile optimization */
+        section[data-testid="stSidebar"] {
+            width: 100% !important;
+        }
+
+        section[data-testid="stSidebar"] > div {
+            padding: 1rem;
+        }
+
+        /* Chat input mobile */
+        .stChatInputContainer {
+            padding: 0.5rem;
+        }
+
+        .stChatInput textarea {
+            font-size: 16px !important; /* Prevents zoom on iOS */
+            padding: 0.75rem !important;
+        }
+
+        /* Columns mobile - stack vertically */
+        [data-testid="column"] {
+            width: 100% !important;
+            min-width: 100% !important;
+        }
+
+        /* Divider spacing mobile */
+        hr {
+            margin: 1rem 0;
+        }
+    }
+
+    /* Small mobile styles (max-width: 480px) */
+    @media screen and (max-width: 480px) {
+        .main-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .main-header p {
+            font-size: 0.8rem;
+        }
+
+        .user-badge {
+            font-size: 0.8rem;
+            padding: 0.4rem 0.8rem;
+        }
+
+        .user-badge .role {
+            font-size: 0.7rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.5rem;
+        }
+
+        .stButton>button {
+            font-size: 0.9rem !important;
+        }
+
+        .login-container {
+            margin: 0.5rem;
+            padding: 1rem;
+        }
+
+        .login-header h1 {
+            font-size: 1.5rem;
+        }
+    }
+
+    /* Landscape orientation fixes */
+    @media screen and (max-height: 600px) and (orientation: landscape) {
+        .main-header {
+            padding: 0.75rem;
+        }
+
+        .main-header h1 {
+            font-size: 1.25rem;
+        }
+
+        .main-header p {
+            display: none; /* Hide subtitle in landscape */
+        }
+
+        .stat-card {
+            padding: 0.75rem;
+        }
+    }
+
+    /* Touch device optimizations */
+    @media (hover: none) and (pointer: coarse) {
+        /* Larger touch targets */
+        .stButton>button,
+        button {
+            min-height: 48px;
+            padding: 0.75rem 1.25rem !important;
+        }
+
+        /* Better scrolling */
+        .stChatMessage {
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Prevent text selection on buttons */
+        button {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
     }
 </style>
 """, unsafe_allow_html=True)
