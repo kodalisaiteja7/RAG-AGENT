@@ -16,11 +16,20 @@ class OneStreamExpert:
     """Agent 2: RAG-based expert assistant using Grok-4"""
 
     def __init__(self, vector_store: Optional[VectorStore] = None):
+        # Check for API key
+        if not config.XAI_API_KEY:
+            raise ValueError(
+                "XAI_API_KEY is not set. Please configure your API key in environment variables or .env file."
+            )
+
         # Initialize xAI client for Grok
-        self.client = OpenAI(
-            api_key=config.XAI_API_KEY,
-            base_url="https://api.x.ai/v1"
-        )
+        try:
+            self.client = OpenAI(
+                api_key=config.XAI_API_KEY,
+                base_url="https://api.x.ai/v1"
+            )
+        except Exception as e:
+            raise ValueError(f"Failed to initialize OpenAI client: {str(e)}")
 
         # Initialize vector store
         self.vector_store = vector_store or VectorStore()

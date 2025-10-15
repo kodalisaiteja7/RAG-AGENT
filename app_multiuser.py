@@ -289,13 +289,22 @@ def login_page():
 
                     # Initialize vector store for user
                     with st.spinner("Loading your knowledge base..."):
-                        st.session_state.vector_store = MultiUserVectorStore(username)
-                        st.session_state.expert = OneStreamExpert(
-                            vector_store=st.session_state.vector_store
-                        )
-
-                    st.success("Login successful!")
-                    st.rerun()
+                        try:
+                            st.session_state.vector_store = MultiUserVectorStore(username)
+                            st.session_state.expert = OneStreamExpert(
+                                vector_store=st.session_state.vector_store
+                            )
+                            st.success("Login successful!")
+                            st.rerun()
+                        except ValueError as e:
+                            st.session_state.authenticated = False
+                            st.session_state.username = None
+                            st.error(f"⚠️ Configuration Error: {str(e)}")
+                            st.info("💡 **Setup Required:** Please configure your XAI_API_KEY in Streamlit Cloud Secrets or environment variables.")
+                        except Exception as e:
+                            st.session_state.authenticated = False
+                            st.session_state.username = None
+                            st.error(f"Error initializing system: {str(e)}")
                 else:
                     st.error("Invalid username or password")
 
