@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+
+# Local development
+.env.local
+*.local
+
+# Documentation
+*.md
+!README.md
+!DEPLOYMENT.md
+
+# Test files
+test_*.py
+*_test.py
+
+# Temporary files
+*.tmp
+.cache/
+
+# Large files (will be volume-mounted)
+onestream_vectordb/
+user_data/
+Regulations\ Dataset/

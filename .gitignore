@@ -40,9 +40,20 @@ onestream_vectordb/
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # Logs
 *.log
 
 # ChromaDB
 chroma.sqlite3
+
+# User data and authentication
+users.json
+user_data/
+
+# Streamlit cache and config
+.streamlit/
+
+# Dataset folders
+Regulations Dataset/

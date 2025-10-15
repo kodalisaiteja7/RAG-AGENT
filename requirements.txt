@@ -22,3 +22,6 @@ pdfplumber>=0.10.0
 # Async and utilities
 aiohttp>=3.9.0
 tqdm>=4.66.0
+
+# UI Framework
+streamlit>=1.29.0
