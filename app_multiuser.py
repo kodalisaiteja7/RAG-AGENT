@@ -13,6 +13,17 @@ from multi_user_vector_store import MultiUserVectorStore
 from user_manager import get_user_manager
 import config
 
+# Initialize database on first run
+try:
+    from init_database import init_for_deployment
+    if 'initialized' not in st.session_state:
+        with st.spinner("Initializing system..."):
+            init_for_deployment()
+        st.session_state.initialized = True
+except Exception as e:
+    st.error(f"Initialization warning: {e}")
+    st.session_state.initialized = True  # Continue anyway
+
 # Page configuration
 st.set_page_config(
     page_title="Enterprise RAG System",

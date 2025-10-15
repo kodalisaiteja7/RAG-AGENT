@@ -25,7 +25,8 @@ wheels/
 
 # Generated data
 onestream_kb.json
-onestream_vectordb/
+onestream_vectordb/*
+!onestream_vectordb/.gitkeep
 
 # IDEs
 .vscode/
@@ -50,7 +51,8 @@ chroma.sqlite3
 
 # User data and authentication
 users.json
-user_data/
+user_data/*
+!user_data/.gitkeep
 
 # Streamlit cache and config
 .streamlit/
