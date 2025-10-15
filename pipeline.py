@@ -139,26 +139,8 @@ def main():
     else:
         print("\n[OK] Knowledge base found. Ready to answer questions.\n")
 
-    # Run test queries
-    print("\n" + "="*70)
-    print("Testing with sample questions...")
-    print("="*70)
-
-    test_questions = [
-        "How do I configure VIE elimination logic in OneStream?",
-        "What are the best practices for building cube views in OneStream?"
-    ]
-
-    for question in test_questions:
-        print(f"\n\n{'='*70}")
-        print(f"Q: {question}")
-        print(f"{'='*70}\n")
-
-        result = pipeline.query(question)
-        print(result['answer'])
-
     # Start interactive mode
-    print("\n\n" + "="*70)
+    print("\n" + "="*70)
     print("Starting interactive mode...")
     print("="*70 + "\n")
 
