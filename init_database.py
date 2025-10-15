@@ -137,10 +137,14 @@ def initialize_vector_database():
 
         kb_path = config.KB_OUTPUT_PATH
 
-        if os.path.exists(kb_path):
-            logger.info("Initializing vector database...")
+        if not os.path.exists(kb_path):
+            logger.warning(f"Knowledge base file not found: {kb_path}")
+            return False
 
-            # Check if vector DB is empty
+        logger.info("Checking vector database...")
+
+        # Check if vector DB is empty
+        try:
             vector_store = MultiUserVectorStore()
             stats = vector_store.get_stats()
 
@@ -148,14 +152,19 @@ def initialize_vector_database():
                 logger.info("Vector database is empty, embedding documents...")
                 vector_store.embed_admin_documents(kb_path)
                 logger.info("✓ Vector database initialized successfully")
+                return True
             else:
-                logger.info(f"Vector database already has {stats['admin_chunks']} chunks")
-        else:
-            logger.warning(f"Knowledge base file not found: {kb_path}")
+                logger.info(f"Vector database already has {stats['admin_chunks']} chunks - skipping")
+                return False
+        except Exception as ve:
+            logger.warning(f"Could not check vector database: {ve}")
+            # Don't fail initialization if we can't check - assume it exists
+            return False
 
     except Exception as e:
         logger.error(f"Error initializing vector database: {e}")
-        raise
+        # Don't raise - allow app to continue
+        return False
 
 
 def init_for_deployment():
