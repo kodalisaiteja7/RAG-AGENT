@@ -67,17 +67,28 @@ CRITICAL: Your primary goal is ACCURACY. If the answer is in the provided contex
         # Search vector store
         results = self.vector_store.search(query, top_k=top_k)
 
+        logger.info(f"Retrieved {len(results)} chunks from vector store")
+
         if not results:
+            logger.warning("No results found in vector store - may need to re-embed documents")
             return {"context": "", "citations": []}
 
-        # Filter by relevance threshold - distance < 1.0 is generally good
-        # Lower distance = more similar
-        RELEVANCE_THRESHOLD = 1.2
+        # Log distances for debugging
+        if results:
+            distances = [r.get('distance', 999) for r in results]
+            logger.info(f"Chunk distances: min={min(distances):.3f}, max={max(distances):.3f}, avg={sum(distances)/len(distances):.3f}")
+
+        # Filter by relevance threshold - distance < 1.5 is generally acceptable
+        # Lower distance = more similar (relaxed threshold for better recall)
+        RELEVANCE_THRESHOLD = 1.5
         relevant_results = [r for r in results if r.get('distance', 999) < RELEVANCE_THRESHOLD]
+
+        logger.info(f"After relevance filtering: {len(relevant_results)} chunks passed threshold")
 
         if not relevant_results:
             # If no highly relevant results, use top results anyway
             relevant_results = results[:max(3, len(results) // 2)]
+            logger.info(f"No chunks passed threshold - using top {len(relevant_results)} results anyway")
 
         # Format context
         context_parts = []
@@ -123,24 +134,59 @@ CRITICAL: Your primary goal is ACCURACY. If the answer is in the provided contex
         ranked = sorted(retrieved_chunks, key=lambda x: x.get('distance', float('inf')))
         return ranked[:config.CONTEXT_WINDOW]
 
+    def expand_query(self, query: str) -> List[str]:
+        """
+        Expand query with variations to improve retrieval
+        """
+        variations = [query]
+
+        # Add question variations
+        query_lower = query.lower().strip()
+
+        # If it's a question, also try statement form
+        if query_lower.startswith(('what', 'how', 'why', 'when', 'where', 'who')):
+            # Remove question words for alternative search
+            words = query.split()
+            if len(words) > 2:
+                variations.append(' '.join(words[1:]))
+
+        # Add without punctuation
+        variations.append(query.replace('?', '').replace('!', ''))
+
+        return variations
+
     def answer_question(self, question: str, model: str = "grok-4-0709") -> Dict:
         """
-        Answer a question using RAG pipeline
+        Answer a question using RAG pipeline with query expansion
         Returns: {answer, citations, confidence}
         """
         logger.info(f"Processing question: {question}")
 
-        # Step 1: Retrieve relevant context
-        retrieval_result = self.retrieve_context(question)
-        context = retrieval_result['context']
-        citations = retrieval_result['citations']
+        # Try multiple query variations for better retrieval
+        query_variations = self.expand_query(question)
+        logger.info(f"Query variations: {query_variations}")
 
-        if not context:
+        all_results = []
+        for query_var in query_variations:
+            retrieval_result = self.retrieve_context(query_var)
+            if retrieval_result['context']:
+                all_results.append(retrieval_result)
+
+        # Use the result with most citations, or first non-empty
+        if not all_results:
+            logger.warning(f"No context found for any query variation. Total chunks in DB may be insufficient.")
             return {
-                "answer": "Insufficient data in knowledge base. Please try rephrasing your question or provide more context.",
+                "answer": "I couldn't find relevant information in the knowledge base to answer your question. This might mean:\n\n1. The information isn't in the uploaded documents\n2. The documents haven't been embedded yet - try running: `python reembed_all_documents.py`\n3. The question phrasing doesn't match the document content\n\nPlease try rephrasing your question or ensure the relevant documents are uploaded and embedded.",
                 "citations": [],
                 "confidence": "low"
             }
+
+        # Pick the best result (most citations)
+        retrieval_result = max(all_results, key=lambda x: len(x['citations']))
+        context = retrieval_result['context']
+        citations = retrieval_result['citations']
+
+        logger.info(f"Using result with {len(citations)} citations")
 
         # Step 2: Build prompt with context
         user_prompt = f"""You have been provided with relevant excerpts from the knowledge base below. Your task is to answer the question using ONLY the information in these excerpts.

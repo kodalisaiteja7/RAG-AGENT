@@ -41,5 +41,5 @@ EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 KB_OUTPUT_PATH = "./onestream_kb.json"
 
 # RAG settings
-TOP_K_RESULTS = 8  # Retrieve more candidates
-CONTEXT_WINDOW = 6  # Use more chunks in context for better coverage
+TOP_K_RESULTS = 12  # Retrieve more candidates for better recall
+CONTEXT_WINDOW = 10  # Use more chunks in context for better coverage
