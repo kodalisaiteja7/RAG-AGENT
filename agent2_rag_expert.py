@@ -38,22 +38,23 @@ class OneStreamExpert:
         self.system_prompt = """You are an expert knowledge assistant with access to a comprehensive knowledge base.
 
 Your role:
-1. Answer questions with high accuracy based on the provided context
-2. Provide detailed explanations with examples when relevant
-3. Break down complex topics using clear reasoning
-4. Cite your sources using URLs from the knowledge base
-5. Extract and synthesize information from multiple sources when needed
+1. Answer questions with HIGH ACCURACY based STRICTLY on the provided context
+2. Extract ALL relevant information from the context, even if spread across multiple sources
+3. Synthesize information from different sections to provide complete answers
+4. Provide detailed explanations with specific examples, numbers, and facts from the context
+5. Never make assumptions or add information not present in the context
 
 Response guidelines:
-- Start with a direct answer to the question
-- Provide comprehensive explanations using the context provided
-- Include relevant details, definitions, and examples from the source material
-- If the context contains the answer but it's spread across multiple sections, synthesize it coherently
-- End with "Sources:" section listing the cited references
+- CAREFULLY READ ALL provided context sources before answering
+- Start with a direct, complete answer to the question
+- Include ALL relevant details, definitions, steps, examples, and specifics from the context
+- If information is in the context, YOU MUST use it - do not say "insufficient data" if the answer exists
+- Break down complex information into clear, organized sections
+- Quote or paraphrase key information directly from the sources
+- If multiple sources provide related information, combine them into a coherent answer
+- Only say "I don't have enough information" if the context TRULY lacks the answer
 
-IMPORTANT: If the provided context contains relevant information, use it to answer the question fully.
-Only say "Insufficient data in knowledge base" if the context truly lacks the necessary information to answer.
-Do not refuse to answer if the information is present in the context, even if it requires synthesis.
+CRITICAL: Your primary goal is ACCURACY. If the answer is in the provided context, you MUST find it and present it completely.
 """
 
     def retrieve_context(self, query: str, top_k: int = config.TOP_K_RESULTS) -> Dict:
@@ -69,18 +70,28 @@ Do not refuse to answer if the information is present in the context, even if it
         if not results:
             return {"context": "", "citations": []}
 
+        # Filter by relevance threshold - distance < 1.0 is generally good
+        # Lower distance = more similar
+        RELEVANCE_THRESHOLD = 1.2
+        relevant_results = [r for r in results if r.get('distance', 999) < RELEVANCE_THRESHOLD]
+
+        if not relevant_results:
+            # If no highly relevant results, use top results anyway
+            relevant_results = results[:max(3, len(results) // 2)]
+
         # Format context
         context_parts = []
         citations = []
         seen_urls = set()
 
-        for idx, result in enumerate(results):
+        for idx, result in enumerate(relevant_results):
             metadata = result['metadata']
             content = result['content']
+            distance = result.get('distance', 0)
 
-            # Add to context
+            # Add to context with relevance info
             context_parts.append(f"""
-[Source {idx + 1}: {metadata['document_title']}]
+[Source {idx + 1}: {metadata['document_title']} | Relevance: {1 / (1 + distance):.2f}]
 {content}
 """)
 
@@ -90,15 +101,17 @@ Do not refuse to answer if the information is present in the context, even if it
                 citations.append({
                     "title": metadata['document_title'],
                     "url": url,
-                    "source_type": metadata['source_type']
+                    "source_type": metadata['source_type'],
+                    "relevance_score": 1 / (1 + distance)
                 })
                 seen_urls.add(url)
 
         context = "\n---\n".join(context_parts)
 
+        # Return all unique citations (dynamic based on relevant sources found)
         return {
             "context": context,
-            "citations": citations[:3]  # Top 3 unique sources
+            "citations": citations  # Return all relevant citations dynamically
         }
 
     def rank_and_filter_context(self, query: str, retrieved_chunks: List[Dict]) -> List[Dict]:
@@ -130,32 +143,52 @@ Do not refuse to answer if the information is present in the context, even if it
             }
 
         # Step 2: Build prompt with context
-        user_prompt = f"""Based on the following knowledge base excerpts, answer this question:
+        user_prompt = f"""You have been provided with relevant excerpts from the knowledge base below. Your task is to answer the question using ONLY the information in these excerpts.
 
 Question: {question}
 
 Knowledge Base Context:
 {context}
 
-Provide a comprehensive answer with specific details, examples, and explanations.
-Use all relevant information from the context to fully address the question.
+Instructions:
+1. Read through ALL the context sources carefully
+2. Extract ALL relevant information that answers the question
+3. Combine information from multiple sources if needed
+4. Provide a complete, detailed answer with specific facts, examples, and explanations
+5. If you see the answer directly stated in the context, include it in your response
+6. Organize your answer clearly with proper structure
+7. Do NOT say information is missing if it's present in the context above
+
+Provide your comprehensive answer now:
 """
 
         # Step 3: Get response from Grok
         try:
             response = self.client.chat.completions.create(
                 model=model,
-                max_tokens=2000,
+                max_tokens=3000,
                 messages=[
                     {"role": "system", "content": self.system_prompt},
                     {"role": "user", "content": user_prompt}
                 ],
-                temperature=0.3
+                temperature=0.1  # Lower temperature for more factual, context-focused responses
             )
 
             answer = response.choices[0].message.content
 
-            # Step 4: Append citations
+            # Step 4: Calculate confidence based on relevance scores
+            if citations:
+                avg_relevance = sum(c.get('relevance_score', 0) for c in citations) / len(citations)
+                if avg_relevance >= 0.7 and len(citations) >= 2:
+                    confidence = "high"
+                elif avg_relevance >= 0.5 or len(citations) >= 1:
+                    confidence = "medium"
+                else:
+                    confidence = "low"
+            else:
+                confidence = "low"
+
+            # Step 5: Append citations
             if citations:
                 citations_text = "\n\n**Sources:**\n"
                 for idx, citation in enumerate(citations, 1):
@@ -166,7 +199,7 @@ Use all relevant information from the context to fully address the question.
             return {
                 "answer": answer,
                 "citations": citations,
-                "confidence": "high" if len(citations) >= 2 else "medium"
+                "confidence": confidence
             }
 
         except Exception as e:

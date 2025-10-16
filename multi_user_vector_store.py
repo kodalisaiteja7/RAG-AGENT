@@ -70,14 +70,51 @@ class MultiUserVectorStore:
 
     def chunk_text(self, text: str, chunk_size: int = config.CHUNK_SIZE,
                    overlap: int = config.CHUNK_OVERLAP) -> List[str]:
-        """Split text into overlapping chunks"""
-        words = text.split()
-        chunks = []
+        """Split text into overlapping chunks with sentence boundary awareness"""
+        import re
 
-        for i in range(0, len(words), chunk_size - overlap):
-            chunk = ' '.join(words[i:i + chunk_size])
-            if len(chunk.split()) > 50:
-                chunks.append(chunk)
+        # Split into sentences first
+        sentence_endings = r'(?<=[.!?])\s+'
+        sentences = re.split(sentence_endings, text)
+
+        chunks = []
+        current_chunk = []
+        current_word_count = 0
+
+        for sentence in sentences:
+            sentence_words = sentence.split()
+            sentence_word_count = len(sentence_words)
+
+            # If adding this sentence exceeds chunk_size, save current chunk
+            if current_word_count + sentence_word_count > chunk_size and current_chunk:
+                chunk_text = ' '.join(current_chunk)
+                if len(chunk_text.split()) > 50:  # Min chunk size
+                    chunks.append(chunk_text)
+
+                # Start new chunk with overlap
+                # Keep last 'overlap' words from previous chunk
+                overlap_words = []
+                temp_count = 0
+                for sent in reversed(current_chunk):
+                    sent_words = sent.split()
+                    if temp_count + len(sent_words) <= overlap:
+                        overlap_words.insert(0, sent)
+                        temp_count += len(sent_words)
+                    else:
+                        break
+
+                current_chunk = overlap_words
+                current_word_count = temp_count
+
+            # Add current sentence
+            current_chunk.append(sentence)
+            current_word_count += sentence_word_count
+
+        # Add final chunk
+        if current_chunk:
+            chunk_text = ' '.join(current_chunk)
+            if len(chunk_text.split()) > 50:
+                chunks.append(chunk_text)
 
         return chunks
 
