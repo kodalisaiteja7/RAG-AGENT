@@ -1173,16 +1173,25 @@ def chat_interface():
             # Use regular containers instead of st.chat_message for mobile compatibility
             st.markdown(f"### {'🤖 Assistant' if role == 'assistant' else '👤 You'}")
 
-            # Display content in a simple container
+            # Display content in a simple container with high contrast
             with st.container():
+                # Escape HTML in content to prevent rendering issues
+                safe_content = content.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
+
                 st.markdown(f"""
-                <div style="background-color: {'#e3f2fd' if role == 'user' else '#f5f5f5'};
-                            padding: 15px;
-                            border-radius: 10px;
-                            margin: 10px 0;
-                            border: 2px solid {'#2196f3' if role == 'user' else '#9e9e9e'};">
-                    <p style="color: #000000; font-size: 16px; line-height: 1.6; margin: 0;">
-                        {content}
+                <div style="background-color: {'#ffffff' if role == 'user' else '#ffffff'};
+                            padding: 20px;
+                            border-radius: 12px;
+                            margin: 15px 0;
+                            border: 3px solid {'#1976d2' if role == 'user' else '#424242'};
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <p style="color: #000000 !important;
+                              font-size: 17px;
+                              line-height: 1.7;
+                              margin: 0;
+                              font-weight: 500;
+                              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                        {safe_content}
                     </p>
                 </div>
                 """, unsafe_allow_html=True)
