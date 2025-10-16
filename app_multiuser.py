@@ -39,6 +39,11 @@ st.set_page_config(
     initial_sidebar_state="auto"  # Auto-collapse on mobile
 )
 
+# Add mobile viewport fix
+st.markdown("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+""", unsafe_allow_html=True)
+
 # Custom CSS for professional styling
 st.markdown("""
 <style>
@@ -245,11 +250,144 @@ st.markdown("""
             font-size: 1.75rem;
         }
 
-        /* Chat messages mobile */
+        /* ========== ENHANCED MOBILE CHAT FIXES ========== */
+
+        /* Main app container - ensure proper viewport usage */
+        .main {
+            overflow-x: hidden !important;
+            width: 100vw !important;
+            max-width: 100% !important;
+            background: transparent !important;
+        }
+
+        /* Block container - reduce padding for more space */
+        .block-container {
+            padding: 0.5rem !important;
+            padding-bottom: 80px !important; /* Space for sticky input */
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+            background: transparent !important;
+        }
+
+        /* Chat messages container - proper scrolling area */
+        [data-testid="stVerticalBlock"] {
+            overflow-x: hidden !important;
+            max-width: 100% !important;
+            background: transparent !important;
+        }
+
+        /* Remove white backgrounds from app view container */
+        [data-testid="stAppViewContainer"],
+        [data-testid="stApp"] {
+            background: #f9fafb !important;
+        }
+
+        /* Individual chat messages */
         .stChatMessage {
-            padding: 0.75rem;
-            margin-bottom: 0.75rem;
-            border-radius: 8px;
+            padding: 0.75rem !important;
+            margin: 0.5rem 0 !important;
+            border-radius: 8px !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            overflow-x: hidden !important;
+            background: #ffffff !important;
+            border: 1px solid #e5e7eb !important;
+            position: relative !important;
+            z-index: 10 !important;
+        }
+
+        /* Chat message content wrapper */
+        .stChatMessage > div {
+            max-width: 100% !important;
+            width: 100% !important;
+            overflow-x: hidden !important;
+            position: relative !important;
+            z-index: 11 !important;
+        }
+
+        /* Chat message text content */
+        .stChatMessage p {
+            font-size: 0.95rem !important;
+            line-height: 1.5 !important;
+            margin-bottom: 0.5rem !important;
+            word-break: break-word !important;
+            overflow-wrap: break-word !important;
+            max-width: 100% !important;
+        }
+
+        /* Chat message content wrapper */
+        .stChatMessageContent {
+            max-width: 100% !important;
+            width: 100% !important;
+            overflow-x: hidden !important;
+        }
+
+        /* Code blocks in chat - horizontal scroll only for code */
+        .stChatMessage pre {
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            font-size: 0.85rem !important;
+            max-width: 100% !important;
+            white-space: pre-wrap !important;
+            word-wrap: break-word !important;
+        }
+
+        .stChatMessage code {
+            font-size: 0.85rem !important;
+            word-break: break-all !important;
+            white-space: pre-wrap !important;
+        }
+
+        /* Chat input container - sticky at bottom */
+        .stChatInputContainer {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            padding: 0.75rem !important;
+            background: white !important;
+            border-top: 1px solid #e5e7eb !important;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important;
+            z-index: 10 !important;
+            margin: 0 !important;
+        }
+
+        /* Chat input field */
+        .stChatInput {
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+        }
+
+        .stChatInput textarea {
+            font-size: 16px !important; /* Prevents zoom on iOS */
+            padding: 0.75rem !important;
+            max-width: 100% !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            border-radius: 8px !important;
+        }
+
+        /* Chat message container wrapper */
+        [data-testid="stChatMessageContainer"] {
+            padding: 0.5rem !important;
+            padding-bottom: 90px !important; /* Extra space for fixed input */
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+            background: transparent !important;
+            position: relative !important;
+            z-index: 1 !important;
+        }
+
+        /* Ensure individual chat message wrapper is on top */
+        [data-testid="stChatMessageContainer"] > div {
+            position: relative !important;
+            z-index: 5 !important;
+            background: transparent !important;
         }
 
         /* Buttons mobile - larger touch targets */
@@ -257,6 +395,8 @@ st.markdown("""
             padding: 0.75rem 1rem !important;
             font-size: 0.95rem !important;
             min-height: 44px;
+            width: 100% !important;
+            max-width: 100% !important;
         }
 
         /* Login form mobile */
@@ -290,21 +430,32 @@ st.markdown("""
         /* Tabs mobile */
         .stTabs [data-baseweb="tab-list"] {
             gap: 0.5rem;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
         }
 
         .stTabs [data-baseweb="tab"] {
             padding: 0.5rem 0.75rem;
             font-size: 0.9rem;
+            white-space: nowrap;
         }
 
         /* Expander mobile */
         .stExpander {
             border-radius: 8px;
+            max-width: 100% !important;
+            overflow-x: hidden !important;
         }
 
         .stExpander summary {
             font-size: 0.9rem;
             padding: 0.75rem;
+            word-break: break-word !important;
+        }
+
+        .stExpander [data-testid="stExpanderDetails"] {
+            max-width: 100% !important;
+            overflow-x: hidden !important;
         }
 
         /* Metrics mobile */
@@ -329,14 +480,11 @@ st.markdown("""
             padding: 1rem;
         }
 
-        /* Chat input mobile */
-        .stChatInputContainer {
-            padding: 0.5rem;
-        }
-
-        .stChatInput textarea {
-            font-size: 16px !important; /* Prevents zoom on iOS */
-            padding: 0.75rem !important;
+        /* Main content area */
+        .main .block-container {
+            padding: 0.5rem !important;
+            padding-bottom: 90px !important;
+            max-width: 100% !important;
         }
 
         /* Columns mobile - stack vertically */
@@ -348,6 +496,74 @@ st.markdown("""
         /* Divider spacing mobile */
         hr {
             margin: 1rem 0;
+        }
+
+        /* Alert boxes mobile */
+        .stAlert {
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }
+
+        /* Spinner mobile - proper centering and visibility */
+        .stSpinner {
+            text-align: center;
+            padding: 2rem 0;
+            width: 100% !important;
+        }
+
+        .stSpinner > div {
+            margin: 0 auto;
+        }
+
+        /* Success/Warning/Error messages mobile */
+        .stSuccess, .stWarning, .stError, .stInfo {
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+            word-break: break-word !important;
+            font-size: 0.9rem !important;
+            padding: 0.75rem !important;
+            margin: 0.5rem 0 !important;
+        }
+
+        /* Remove any white overlays that might be covering content */
+        .main::before,
+        .main::after,
+        [data-testid="stAppViewContainer"]::before,
+        [data-testid="stAppViewContainer"]::after {
+            display: none !important;
+        }
+
+        /* Ensure chat content is visible - specific fixes */
+        .stChatMessage {
+            min-height: 60px !important;
+        }
+
+        /* Simple mobile chat styling - minimal approach */
+        .stChatMessage {
+            background: #f8f9fa !important;
+            padding: 1rem !important;
+            margin: 0.5rem 0 !important;
+            border-radius: 8px !important;
+            border: 1px solid #dee2e6 !important;
+        }
+
+        .stChatMessage p,
+        .stChatMessage div {
+            color: #000000 !important;
+            font-size: 16px !important;
+            line-height: 1.5 !important;
+        }
+
+        /* Code blocks visible */
+        .stCodeBlock {
+            background: #ffffff !important;
+            border: 1px solid #000000 !important;
+            padding: 10px !important;
+        }
+
+        .stCodeBlock code {
+            color: #000000 !important;
+            font-size: 14px !important;
         }
     }
 
@@ -945,72 +1161,80 @@ def chat_interface():
         session = st.session_state.chat_sessions[username][session_id]
         st.caption(f"📝 {session['name']} • Started: {session['created_at'][:16]}")
 
-    # Display chat history
-    for message in messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+    # Create a container for chat messages
+    chat_container = st.container()
 
-            if message["role"] == "assistant" and "citations" in message:
-                if message["citations"]:
-                    with st.expander("📚 Sources"):
-                        for idx, citation in enumerate(message["citations"], 1):
-                            is_admin = citation.get('source_type') != 'user_uploaded'
-                            badge = "🌐 Admin KB" if is_admin else "📁 My Documents"
+    with chat_container:
+        # Display chat history - ALTERNATIVE METHOD WITHOUT st.chat_message
+        for idx, message in enumerate(messages):
+            role = message["role"]
+            content = message.get("content", "")
 
-                            st.markdown(f"**{idx}. {citation['title']}** {badge}")
-                            st.caption(f"Type: {citation['source_type']}")
+            # Use regular containers instead of st.chat_message for mobile compatibility
+            st.markdown(f"### {'🤖 Assistant' if role == 'assistant' else '👤 You'}")
+
+            # Display content in a simple container
+            with st.container():
+                st.markdown(f"""
+                <div style="background-color: {'#e3f2fd' if role == 'user' else '#f5f5f5'};
+                            padding: 15px;
+                            border-radius: 10px;
+                            margin: 10px 0;
+                            border: 2px solid {'#2196f3' if role == 'user' else '#9e9e9e'};">
+                    <p style="color: #000000; font-size: 16px; line-height: 1.6; margin: 0;">
+                        {content}
+                    </p>
+                </div>
+                """, unsafe_allow_html=True)
+
+                # Display confidence badge if it's an assistant message
+                if role == "assistant" and "confidence" in message:
+                    confidence = message["confidence"]
+                    if confidence == "high":
+                        st.success("✓ High Confidence", icon="✅")
+                    elif confidence == "medium":
+                        st.warning("⚠ Medium Confidence", icon="⚠️")
+                    elif confidence == "low":
+                        st.error("⚠ Low Confidence", icon="❌")
+
+                # Display citations if available
+                if role == "assistant" and "citations" in message:
+                    if message["citations"]:
+                        with st.expander("📚 Sources"):
+                            for idx, citation in enumerate(message["citations"], 1):
+                                is_admin = citation.get('source_type') != 'user_uploaded'
+                                badge = "🌐 Admin KB" if is_admin else "📁 My Documents"
+
+                                st.markdown(f"**{idx}. {citation['title']}** {badge}")
+                                st.caption(f"Type: {citation['source_type']}")
 
     # Chat input
     if prompt := st.chat_input("Ask me anything from your knowledge base..."):
-        # Add user message
+        # Add user message immediately
         messages.append({"role": "user", "content": prompt})
-        save_current_messages(messages)
 
-        with st.chat_message("user"):
-            st.markdown(prompt)
+        # Build context from previous messages for better continuity
+        context_messages = []
+        for msg in messages[-6:]:  # Last 3 exchanges (6 messages)
+            if msg["role"] == "user":
+                context_messages.append(f"User: {msg['content']}")
+            elif msg["role"] == "assistant":
+                context_messages.append(f"Assistant: {msg['content']}")
 
-        with st.chat_message("assistant"):
-            with st.spinner("Analyzing..."):
-                # Build context from previous messages for better continuity
-                context_messages = []
-                for msg in messages[-6:]:  # Last 3 exchanges (6 messages)
-                    if msg["role"] == "user":
-                        context_messages.append(f"User: {msg['content']}")
-                    elif msg["role"] == "assistant":
-                        context_messages.append(f"Assistant: {msg['content']}")
+        # Add context to current query if there's conversation history
+        if len(messages) > 1:
+            context_str = "\n".join(context_messages[:-1])  # Exclude current message
+            enhanced_prompt = f"Previous conversation:\n{context_str}\n\nCurrent question: {prompt}"
+        else:
+            enhanced_prompt = prompt
 
-                # Add context to current query if there's conversation history
-                if len(messages) > 1:
-                    context_str = "\n".join(context_messages[:-1])  # Exclude current message
-                    enhanced_prompt = f"Previous conversation:\n{context_str}\n\nCurrent question: {prompt}"
-                else:
-                    enhanced_prompt = prompt
+        # Get response
+        with st.spinner("🤔 Thinking..."):
+            result = st.session_state.expert.answer_question(enhanced_prompt)
 
-                result = st.session_state.expert.answer_question(enhanced_prompt)
-
-                response = result["answer"]
-                citations = result["citations"]
-                confidence = result["confidence"]
-
-                st.markdown(response)
-
-                # Confidence badge
-                if confidence == "high":
-                    st.success(f"✓ High Confidence")
-                elif confidence == "medium":
-                    st.warning(f"⚠ Medium Confidence")
-                else:
-                    st.error(f"⚠ Low Confidence")
-
-                # Sources
-                if citations:
-                    with st.expander("📚 Sources"):
-                        for idx, citation in enumerate(citations, 1):
-                            is_admin = citation.get('source_type') != 'user_uploaded'
-                            badge = "🌐 Admin KB" if is_admin else "📁 My Documents"
-
-                            st.markdown(f"**{idx}. {citation['title']}** {badge}")
-                            st.caption(f"Type: {citation['source_type']}")
+            response = result["answer"]
+            citations = result["citations"]
+            confidence = result["confidence"]
 
         # Add assistant message
         messages.append({
@@ -1019,7 +1243,11 @@ def chat_interface():
             "citations": citations,
             "confidence": confidence
         })
+
+        # Save messages
         save_current_messages(messages)
+
+        # Rerun to display the new messages
         st.rerun()
 
 

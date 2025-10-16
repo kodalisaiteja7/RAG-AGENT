@@ -20,7 +20,28 @@ class MultiUserVectorStore:
 
     def __init__(self, username: str = None):
         self.username = username
-        self.embedding_model = SentenceTransformer(config.EMBEDDING_MODEL)
+
+        # Initialize embedding model with explicit device handling
+        import torch
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+
+        try:
+            # Load model with explicit device and trust_remote_code
+            self.embedding_model = SentenceTransformer(
+                config.EMBEDDING_MODEL,
+                device=device,
+                trust_remote_code=True
+            )
+            logger.info(f"Loaded embedding model on {device}")
+        except Exception as e:
+            logger.warning(f"Failed to load on {device}, trying CPU: {e}")
+            # Fallback to CPU with explicit settings
+            self.embedding_model = SentenceTransformer(
+                config.EMBEDDING_MODEL,
+                device="cpu",
+                trust_remote_code=True
+            )
+            logger.info("Loaded embedding model on CPU")
 
         # Admin vector store (shared)
         self.admin_client = chromadb.PersistentClient(
