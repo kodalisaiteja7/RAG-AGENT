@@ -135,12 +135,26 @@ st.markdown("""
     }
 
     /* ========== MODERN CHAT BUBBLES ========== */
+    .chat-wrapper {
+        display: flex;
+        flex-direction: column;
+        margin: 20px 0;
+        width: 100%;
+    }
+
+    .chat-wrapper.user {
+        align-items: flex-end;
+    }
+
+    .chat-wrapper.assistant {
+        align-items: flex-start;
+    }
+
     .chat-bubble {
         display: inline-block;
-        max-width: 85%;
+        max-width: 70%;
         padding: 18px 24px;
         border-radius: 20px;
-        margin: 12px 0;
         font-size: 16px;
         line-height: 1.6;
         word-wrap: break-word;
@@ -156,7 +170,6 @@ st.markdown("""
         background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
         color: white;
         border-bottom-right-radius: 4px;
-        margin-left: auto;
         box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
     }
 
@@ -687,36 +700,34 @@ def chat_interface():
         avatar_emoji = "👤" if role == "user" else "🤖"
         label_text = "You" if role == "user" else "Assistant"
 
-        col1, col2 = st.columns([1, 20])
-        with (col2 if role == "user" else col1):
-            st.markdown(f"""
+        # Escape content
+        safe_content = content.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
+
+        # Complete chat wrapper with label and bubble
+        st.markdown(f"""
+        <div class="chat-wrapper {role}">
             <div class="chat-label {role}">
                 <span class="avatar {role}">{avatar_emoji}</span>
                 <span>{label_text}</span>
             </div>
-            """, unsafe_allow_html=True)
-
-        # Chat bubble
-        safe_content = content.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
-
-        col1, col2 = st.columns([1, 20])
-        with (col2 if role == "user" else col1):
-            st.markdown(f"""
             <div class="chat-bubble {role}">
                 {safe_content}
             </div>
-            """, unsafe_allow_html=True)
+        </div>
+        """, unsafe_allow_html=True)
 
-        # Confidence badge
+        # Confidence badge (aligned based on role)
         if role == "assistant" and "confidence" in message:
             confidence = message["confidence"]
             st.markdown(f"""
-            <div class="confidence-badge {confidence}">
-                {confidence} confidence
+            <div style="display: flex; justify-content: flex-start; margin-bottom: 10px;">
+                <div class="confidence-badge {confidence}">
+                    {confidence} confidence
+                </div>
             </div>
             """, unsafe_allow_html=True)
 
-        # Citations
+        # Citations (aligned based on role)
         if role == "assistant" and "citations" in message:
             if message["citations"]:
                 with st.expander("📚 Sources"):
@@ -725,8 +736,6 @@ def chat_interface():
                         badge = "🌐 Admin KB" if is_admin else "📁 My Documents"
                         st.markdown(f"**{idx}. {citation['title']}** {badge}")
                         st.caption(f"Type: {citation['source_type']}")
-
-        st.markdown("<br>", unsafe_allow_html=True)
 
     # Chat input
     if prompt := st.chat_input("Ask me anything..."):
