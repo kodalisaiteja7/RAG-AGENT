@@ -1,302 +1,383 @@
-# OneStream Knowledge Agent System
+# SmartDoc AI - Multi-User RAG System
 
-A two-agent RAG pipeline that harvests OneStream knowledge and provides expert-level answers using retrieval-augmented generation.
+A professional enterprise RAG (Retrieval-Augmented Generation) system with multi-user authentication, document management, and AI-powered question answering.
+
+## 🎯 Features
+
+### Multi-User System
+- **User Authentication** - Secure login system with admin and user roles
+- **Personal Knowledge Bases** - Each user has their own private document collection
+- **Admin Management** - User creation, deletion, and monitoring
+- **Chat Session History** - Persistent conversation history per user
+- **Session Management** - Create, switch, and delete chat sessions
+
+### Document Management
+- **PDF Upload** - Upload PDF documents to your personal knowledge base
+- **Auto-Processing** - Automatic text extraction and embedding generation
+- **Document Library** - View and manage all uploaded documents
+- **Real-time Stats** - Track document and chunk counts
+- **Remove Documents** - Delete documents and auto-rebuild vector database
+
+### Advanced RAG Pipeline
+- **Semantic Chunking** - Sentence-boundary aware chunking preserves context
+- **Query Expansion** - Tries multiple query variations for better recall
+- **Relevance Filtering** - Dynamic threshold-based chunk selection
+- **Dynamic Citations** - Automatic source attribution with relevance scoring
+- **Confidence Scoring** - Answer confidence based on retrieval quality
+
+### Modern UI
+- **Clean Design** - Professional gradient-based interface
+- **Markdown Rendering** - Properly formatted answers with headings, lists, and emphasis
+- **Chat Bubbles** - Modern messaging interface with avatars
+- **Mobile Responsive** - Works seamlessly on all devices
+- **Source Citations** - Expandable source references for each answer
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                  OneStream Knowledge System                  │
-├─────────────────────────────────────────────────────────────┤
-│                                                               │
-│  ┌──────────────────┐         ┌────────────────────┐        │
-│  │   Agent 1:       │         │   Vector Database   │        │
-│  │   Knowledge      │────────▶│   (ChromaDB)        │        │
-│  │   Harvester      │         │   + Embeddings      │        │
-│  │   (GPT-4o)       │         └─────────┬──────────┘        │
-│  └──────────────────┘                   │                    │
-│         │                               │                    │
-│         │ Crawls & Processes            │ Retrieval          │
-│         ▼                               ▼                    │
-│  ┌──────────────────┐         ┌────────────────────┐        │
-│  │  Knowledge Base  │         │   Agent 2:         │        │
-│  │  (JSON)          │         │   RAG Expert       │        │
-│  │  • Docs          │         │   (Grok-4)         │        │
-│  │  • Tutorials     │         │                    │        │
-│  │  • Discussions   │         └────────────────────┘        │
-│  └──────────────────┘                   │                    │
-│                                         │                    │
-│                                         ▼                    │
-│                              ┌────────────────────┐          │
-│                              │  Expert Answers    │          │
-│                              │  + Citations       │          │
-│                              └────────────────────┘          │
-└─────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────┐
+│              SmartDoc AI - Multi-User System              │
+├──────────────────────────────────────────────────────────┤
+│                                                            │
+│  ┌─────────────┐      ┌──────────────────────┐          │
+│  │  Streamlit  │      │  User Management     │          │
+│  │  Web App    │─────▶│  (SQLite Auth)       │          │
+│  └──────┬──────┘      └──────────────────────┘          │
+│         │                                                 │
+│         │                                                 │
+│         ▼                                                 │
+│  ┌─────────────────────────────────────────┐            │
+│  │  Multi-User Vector Store                │            │
+│  │  ┌──────────────┐  ┌─────────────────┐ │            │
+│  │  │  Admin KB    │  │  User-Specific  │ │            │
+│  │  │  (ChromaDB)  │  │  Collections    │ │            │
+│  │  └──────────────┘  └─────────────────┘ │            │
+│  └────────────────┬────────────────────────┘            │
+│                   │                                       │
+│                   ▼                                       │
+│  ┌───────────────────────────────────┐                  │
+│  │     RAG Expert (Grok-4)           │                  │
+│  │  • Semantic Search                │                  │
+│  │  • Query Expansion                │                  │
+│  │  • Context Assembly               │                  │
+│  │  • Answer Generation              │                  │
+│  └────────────────┬──────────────────┘                  │
+│                   │                                       │
+│                   ▼                                       │
+│         ┌──────────────────┐                             │
+│         │  Expert Answers  │                             │
+│         │  + Citations     │                             │
+│         │  + Confidence    │                             │
+│         └──────────────────┘                             │
+└──────────────────────────────────────────────────────────┘
 ```
-
-## 🎯 Features
-
-### Agent 1: Knowledge Harvester
-- **Web Crawling**: Crawls OneStream official sites, documentation, and community forums
-- **Content Extraction**: Uses Trafilatura for clean content extraction
-- **Relevance Filtering**: GPT-4o filters out marketing/irrelevant pages
-- **Intelligent Summarization**: Auto-generates summaries for all documents
-- **Structured Output**: Produces normalized JSON knowledge base
-
-### Agent 2: RAG Expert Assistant
-- **Vector Search**: Fast semantic search using sentence transformers
-- **Context Retrieval**: Retrieves top-k relevant chunks for each query
-- **Expert Reasoning**: Grok-4 provides detailed, accurate answers
-- **Citation System**: Always cites sources with URLs
-- **Interactive Mode**: Conversational Q&A interface
 
 ## 📦 Installation
 
-### 1. Clone & Install Dependencies
+### 1. Clone Repository
 
 ```bash
-cd "C:\Users\HARI\Desktop\Teja\OS RAG CLAUDE"
+git clone https://github.com/kodalisaiteja7/RAG-AGENT.git
+cd "OS RAG DOCLING"
+```
+
+### 2. Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
 
-### 2. Configure API Keys
+### 3. Configure API Keys
 
-Copy `.env.example` to `.env` and add your API keys:
+Create `.env` file:
 
-```bash
-cp .env.example .env
-```
-
-Edit `.env`:
 ```env
 OPENAI_API_KEY=sk-...
 XAI_API_KEY=xai-...
+
+# Optional: Customize chunking
+CHUNK_SIZE=1500
+CHUNK_OVERLAP=400
 ```
 
-### 3. Run Initial Setup
+### 4. Initialize Database
 
 ```bash
-python pipeline.py
+python init_database.py
 ```
 
-This will:
-1. Crawl OneStream websites
-2. Extract and process content
-3. Build vector database with embeddings
-4. Launch interactive Q&A mode
+This creates:
+- User database with admin account
+- Default knowledge base
+- User data directories
+
+### 5. Run the Application
+
+```bash
+streamlit run app_multiuser.py
+```
+
+Access at: `http://localhost:8501`
+
+**Default Admin Login:**
+- Username: `admin`
+- Password: `admin123`
 
 ## 🚀 Usage
 
-### Quick Start
+### For Users
+
+1. **Login** with your credentials
+2. **Upload PDFs** via sidebar → "My Documents" → "Upload"
+3. **Wait for processing** (automatic embedding generation)
+4. **Ask questions** in the chat interface
+5. **View sources** by expanding the citations
+6. **Create sessions** for different topics with "New Chat"
+
+### For Admins
+
+1. **Login as admin**
+2. Access **Admin Panel** tab
+3. **Create users** with custom roles
+4. **Monitor usage** - see document counts per user
+5. **Delete users** when needed
+6. **Upload to admin KB** for shared knowledge
+
+### Re-embedding Documents
+
+After system updates that change chunking:
 
 ```bash
-python pipeline.py
+python reembed_all_documents.py
 ```
 
-### Individual Components
+This applies improved chunking to all existing documents.
 
-#### 1. Run Knowledge Harvester Only
+### Testing Retrieval
+
+Debug what chunks are being retrieved:
 
 ```bash
-python agent1_knowledge_harvester.py
+python test_retrieval.py
 ```
 
-Output: `onestream_kb.json`
+Enter a question to see:
+- Retrieved chunk count
+- Similarity distances
+- Source documents
+- Generated answer
 
-#### 2. Build Vector Database
+## 📝 Configuration
 
-```bash
-python vector_store.py
-```
-
-Requires: `onestream_kb.json`
-Output: `./onestream_vectordb/`
-
-#### 3. Query the Expert
-
-```bash
-python agent2_rag_expert.py
-```
-
-Requires: Vector database
-
-### Programmatic Usage
+Edit `config.py`:
 
 ```python
-from pipeline import OneStreamPipeline
-
-# Initialize pipeline
-pipeline = OneStreamPipeline()
-
-# Setup (first time only)
-pipeline.full_setup()
-
-# Query the system
-result = pipeline.query("How do I create business rules in OneStream?")
-print(result['answer'])
-print(f"Citations: {result['citations']}")
-
-# Interactive mode
-pipeline.run_interactive()
-```
-
-## 📝 Example Queries
-
-```
-Q: How do I configure VIE elimination logic in OneStream?
-Q: Explain dynamic data management sequences
-Q: What are best practices for building cube views?
-Q: Give me a VB.NET business rule example for derived members
-Q: How do I implement custom consolidation logic?
-```
-
-## 🔧 Configuration
-
-Edit `config.py` to customize:
-
-```python
-# Crawler settings
-MAX_PAGES_PER_DOMAIN = 100
-CRAWL_DELAY = 1  # seconds
-
-# Chunking
-CHUNK_SIZE = 1000
-CHUNK_OVERLAP = 200
+# Chunking settings
+CHUNK_SIZE = 1500          # Words per chunk
+CHUNK_OVERLAP = 400        # Word overlap between chunks
 
 # RAG settings
-TOP_K_RESULTS = 5
-CONTEXT_WINDOW = 3
+TOP_K_RESULTS = 12         # Chunks to retrieve
+CONTEXT_WINDOW = 10        # Max chunks for context
+
+# Embedding model
+EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
+```
+
+Edit `.env`:
+
+```env
+# Adjust chunk sizes
+CHUNK_SIZE=1500
+CHUNK_OVERLAP=400
 ```
 
 ## 📂 Project Structure
 
 ```
-OS RAG CLAUDE/
-├── agent1_knowledge_harvester.py  # Agent 1: Crawls & processes knowledge
-├── agent2_rag_expert.py           # Agent 2: RAG-based Q&A system
-├── vector_store.py                # Vector DB & embedding management
-├── pipeline.py                    # Orchestration pipeline
-├── config.py                      # Configuration
-├── requirements.txt               # Dependencies
-├── .env.example                   # Environment template
-├── README.md                      # This file
-├── onestream_kb.json             # Knowledge base (generated)
-└── onestream_vectordb/           # Vector database (generated)
+OS RAG DOCLING/
+├── app_multiuser.py              # Main Streamlit application
+├── agent2_rag_expert.py          # RAG expert with query expansion
+├── multi_user_vector_store.py   # Multi-user vector database
+├── user_manager.py               # User authentication system
+├── init_database.py              # Database initialization
+├── reembed_all_documents.py     # Re-embed existing documents
+├── test_retrieval.py            # Debug retrieval performance
+├── config.py                     # Configuration settings
+├── requirements.txt              # Python dependencies
+├── .env                          # API keys (gitignored)
+├── onestream_kb.json            # Admin knowledge base
+├── onestream_vectordb/          # Admin vector database
+└── user_data/                   # User-specific data
+    ├── admin/
+    │   ├── user_kb.json         # User's documents
+    │   ├── chat_sessions.json   # Chat history
+    │   └── user_vectordb/       # User's vector DB
+    └── [username]/
+        └── ...
 ```
 
 ## 🧠 How It Works
 
-### Phase 1: Knowledge Harvesting
-1. Crawls configured OneStream URLs (docs, community, etc.)
-2. Discovers linked pages within same domain
-3. Extracts clean content using Trafilatura
-4. Filters irrelevant pages with GPT-4o
-5. Generates summaries for each document
-6. Saves structured knowledge base as JSON
+### 1. Document Processing
+- **Upload**: User uploads PDF via web interface
+- **Extract**: PyPDF2 extracts text content
+- **Chunk**: Sentence-aware chunking (respects boundaries)
+- **Embed**: Generate embeddings with sentence-transformers
+- **Store**: Save to user-specific ChromaDB collection
 
-### Phase 2: Vector Database Creation
-1. Loads knowledge base
-2. Chunks documents (1000 tokens with 200 overlap)
-3. Generates embeddings using sentence transformers
-4. Stores in ChromaDB for fast retrieval
+### 2. Question Answering
+- **Query**: User asks a question in chat
+- **Expand**: Generate query variations (e.g., remove question words)
+- **Search**: Semantic search across both admin and user collections
+- **Filter**: Apply relevance threshold (distance < 1.5)
+- **Rank**: Sort by similarity distance
+- **Generate**: Send top chunks to Grok-4 for answer generation
+- **Cite**: Attach source documents with relevance scores
 
-### Phase 3: RAG Question Answering
-1. User asks a question
-2. Question is embedded and searched in vector DB
-3. Top-K relevant chunks are retrieved
-4. Context + question sent to Grok-4
-5. Expert answer generated with citations
-6. Sources provided as clickable links
+### 3. Answer Quality
+- **Temperature 0.1**: Factual, context-focused responses
+- **Max 3000 tokens**: Comprehensive answers
+- **Dynamic citations**: All relevant sources included
+- **Confidence scoring**: Based on retrieval quality
 
-## 🎓 Advanced Usage
+## 🔧 Advanced Features
 
-### Force Refresh Knowledge Base
+### Sentence-Aware Chunking
 
-```python
-pipeline = OneStreamPipeline()
-pipeline.full_setup(force_refresh=True)  # Re-crawl everything
+Unlike word-based chunking that breaks mid-sentence:
+- Respects sentence boundaries
+- Maintains semantic coherence
+- Better overlap strategy (full sentences)
+- Preserves context across chunks
+
+### Query Expansion
+
+Automatically tries variations:
+```
+Original: "What is Digoxin?"
+Variations:
+- "What is Digoxin?"
+- "is Digoxin"
+- "What is Digoxin"
 ```
 
-### Custom Search Sources
+Uses the variation with best retrieval results.
 
-Edit `config.py`:
+### Relevance Filtering
 
-```python
-ONESTREAM_URLS = [
-    "https://www.onestreamsoftware.com/",
-    "https://community.onestreamsoftware.com/",
-    "https://docs.onestreamsoftware.com/",
-    "https://your-custom-source.com/"
-]
-```
+- Distance < 1.5: Highly relevant
+- Fallback: Use top 50% if none pass threshold
+- Logs distances for debugging
 
-### Batch Queries
+### Multi-User Isolation
 
-```python
-questions = [
-    "How to create business rules?",
-    "Best practices for cube views?",
-    "VIE elimination setup?"
-]
-
-for q in questions:
-    result = pipeline.query(q)
-    print(f"\nQ: {q}")
-    print(f"A: {result['answer']}\n")
-```
+- Admin KB: Shared knowledge base (e.g., company docs)
+- User KB: Private, per-user document collections
+- Both searched simultaneously
+- Citations show source (Admin KB vs My Documents)
 
 ## 🔍 Models Used
 
-- **Agent 1 (Harvester)**: GPT-4o - Content filtering, summarization
-- **Agent 2 (Expert)**: Grok-4 (grok-4-0709) - RAG reasoning and answer generation
+- **LLM**: Grok-4 (grok-4-0709) via xAI API
 - **Embeddings**: sentence-transformers/all-MiniLM-L6-v2
-- **Vector DB**: ChromaDB (persistent local storage)
+- **Vector DB**: ChromaDB with persistent storage
+- **PDF Processing**: PyPDF2
+- **Web Framework**: Streamlit
 
 ## 🐛 Troubleshooting
 
-### Issue: "Knowledge base not found"
-**Solution**: Run `python agent1_knowledge_harvester.py` first
+### "Insufficient data in knowledge base"
 
-### Issue: "Vector database not found"
-**Solution**: Run `python vector_store.py` after harvesting
+**Causes:**
+1. Documents not uploaded
+2. Documents uploaded but not embedded
+3. Query doesn't match document content
 
-### Issue: API rate limits
-**Solution**: Adjust `CRAWL_DELAY` in config.py or reduce `MAX_PAGES_PER_DOMAIN`
+**Solutions:**
+```bash
+# Check chunk counts
+python -c "from multi_user_vector_store import MultiUserVectorStore; vs = MultiUserVectorStore('admin'); print(vs.get_stats())"
 
-### Issue: Poor answer quality
-**Solution**: Increase `TOP_K_RESULTS` in config.py for more context
+# Re-embed documents
+python reembed_all_documents.py
 
-## 📊 Performance Tips
+# Test retrieval
+python test_retrieval.py
+```
 
-1. **First Run**: Takes 10-30 minutes depending on page count
-2. **Subsequent Queries**: < 3 seconds per question
-3. **Memory**: ~2GB for vector DB with 100 documents
-4. **Optimization**: Use GPU for faster embeddings (install `faiss-gpu`)
+### Markdown Not Rendering
 
-## 🔐 Security Notes
+Ensure `markdown` library is installed:
+```bash
+pip install markdown>=3.5.0
+```
 
-- Never commit `.env` file with real API keys
-- Knowledge base contains publicly available information only
-- No authentication credentials are stored
+### API Key Errors
+
+Check `.env` file:
+```bash
+cat .env  # Linux/Mac
+type .env  # Windows
+```
+
+Verify keys are set:
+```python
+python -c "import config; print(f'XAI: {bool(config.XAI_API_KEY)}')"
+```
+
+### Vector Database Issues
+
+Rebuild from scratch:
+```bash
+rm -rf onestream_vectordb user_data/*/user_vectordb
+python reembed_all_documents.py
+```
+
+## 📊 Performance
+
+- **Chunk Generation**: 1500 words/chunk with 400 overlap
+- **Retrieval**: Top 12 chunks in <100ms
+- **Answer Generation**: 2-5 seconds (depends on Grok-4 API)
+- **Storage**: ~1MB per 10 PDF pages
+- **Memory**: ~500MB for 1000 chunks
+
+## 🔐 Security
+
+- ✅ Password hashing with bcrypt
+- ✅ Session-based authentication
+- ✅ User data isolation
+- ✅ HTML escaping for user input
+- ✅ Markdown rendering only for AI responses
+- ⚠️ `.env` is gitignored (never commit API keys)
+
+## 📈 Future Enhancements
+
+- [ ] Multiple file format support (DOCX, TXT, etc.)
+- [ ] Bulk document upload
+- [ ] Document search and filtering
+- [ ] Export chat history
+- [ ] API endpoints for programmatic access
+- [ ] Custom embedding models
+- [ ] Hybrid search (semantic + keyword)
+- [ ] Answer rating and feedback
 
 ## 📄 License
 
-MIT License - Feel free to modify and use for your projects
+MIT License
 
 ## 🤝 Contributing
 
-Suggestions for improvement:
-1. Add PDF scraping support
-2. Implement incremental updates
-3. Add multi-language support
-4. Create web UI interface
+Contributions welcome! Areas for improvement:
+1. Additional document formats
+2. Better chunking strategies
+3. Multi-language support
+4. Advanced search filters
+5. Analytics dashboard
 
-## 📧 Support
+## 📞 Support
 
-For issues or questions about OneStream itself, visit:
-- https://community.onestreamsoftware.com/
-- https://docs.onestreamsoftware.com/
-
----
-
-**Built with Claude Code** 🤖
+For issues and questions:
+- Check the troubleshooting section
+- Use `test_retrieval.py` to debug
+- Review logs in the terminal where Streamlit is running
