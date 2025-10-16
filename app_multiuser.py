@@ -741,21 +741,10 @@ def chat_interface():
     if prompt := st.chat_input("Ask me anything..."):
         messages.append({"role": "user", "content": prompt})
 
-        context_messages = []
-        for msg in messages[-6:]:
-            if msg["role"] == "user":
-                context_messages.append(f"User: {msg['content']}")
-            elif msg["role"] == "assistant":
-                context_messages.append(f"Assistant: {msg['content']}")
-
-        if len(messages) > 1:
-            context_str = "\n".join(context_messages[:-1])
-            enhanced_prompt = f"Previous conversation:\n{context_str}\n\nCurrent question: {prompt}"
-        else:
-            enhanced_prompt = prompt
-
         with st.spinner("🤔 Thinking..."):
-            result = st.session_state.expert.answer_question(enhanced_prompt)
+            # IMPORTANT: Use ONLY the current prompt for retrieval, not conversation history
+            # The conversation history confuses semantic search
+            result = st.session_state.expert.answer_question(prompt)
 
             response = result["answer"]
             citations = result["citations"]
