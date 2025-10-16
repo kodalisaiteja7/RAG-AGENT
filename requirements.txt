@@ -25,3 +25,4 @@ tqdm>=4.66.0
 
 # UI Framework
 streamlit>=1.29.0
+markdown>=3.5.0

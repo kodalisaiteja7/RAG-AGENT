@@ -8,6 +8,7 @@ import json
 from datetime import datetime
 from pathlib import Path
 import PyPDF2
+import markdown
 from agent2_rag_expert import OneStreamExpert
 from multi_user_vector_store import MultiUserVectorStore
 from user_manager import get_user_manager
@@ -179,6 +180,107 @@ st.markdown("""
         border-bottom-left-radius: 4px;
         border: 2px solid var(--border);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    /* ========== MARKDOWN STYLING IN CHAT ========== */
+    .chat-bubble h1,
+    .chat-bubble h2,
+    .chat-bubble h3,
+    .chat-bubble h4 {
+        color: var(--text-dark);
+        margin-top: 1.2rem;
+        margin-bottom: 0.6rem;
+        font-weight: 700;
+        line-height: 1.3;
+    }
+
+    .chat-bubble h1 { font-size: 1.8rem; }
+    .chat-bubble h2 { font-size: 1.5rem; }
+    .chat-bubble h3 { font-size: 1.3rem; }
+    .chat-bubble h4 { font-size: 1.1rem; }
+
+    .chat-bubble h1:first-child,
+    .chat-bubble h2:first-child,
+    .chat-bubble h3:first-child,
+    .chat-bubble h4:first-child {
+        margin-top: 0;
+    }
+
+    .chat-bubble strong {
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .chat-bubble em {
+        font-style: italic;
+    }
+
+    .chat-bubble ul,
+    .chat-bubble ol {
+        margin: 0.8rem 0;
+        padding-left: 1.5rem;
+    }
+
+    .chat-bubble li {
+        margin: 0.4rem 0;
+        line-height: 1.6;
+    }
+
+    .chat-bubble p {
+        margin: 0.8rem 0;
+    }
+
+    .chat-bubble p:first-child {
+        margin-top: 0;
+    }
+
+    .chat-bubble p:last-child {
+        margin-bottom: 0;
+    }
+
+    .chat-bubble code {
+        background: rgba(0, 0, 0, 0.05);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+    }
+
+    .chat-bubble pre {
+        background: rgba(0, 0, 0, 0.05);
+        padding: 12px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 0.8rem 0;
+    }
+
+    .chat-bubble pre code {
+        background: none;
+        padding: 0;
+    }
+
+    .chat-bubble blockquote {
+        border-left: 4px solid var(--primary);
+        padding-left: 1rem;
+        margin: 0.8rem 0;
+        color: var(--text-light);
+        font-style: italic;
+    }
+
+    .chat-bubble hr {
+        border: none;
+        border-top: 2px solid var(--border);
+        margin: 1.5rem 0;
+    }
+
+    .chat-bubble a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .chat-bubble a:hover {
+        text-decoration: underline;
     }
 
     .chat-label {
@@ -700,8 +802,16 @@ def chat_interface():
         avatar_emoji = "👤" if role == "user" else "🤖"
         label_text = "You" if role == "user" else "Assistant"
 
-        # Escape content
-        safe_content = content.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
+        # Format content based on role
+        if role == "assistant":
+            # Convert markdown to HTML for assistant messages
+            html_content = markdown.markdown(
+                content,
+                extensions=['extra', 'nl2br', 'sane_lists']
+            )
+        else:
+            # For user messages, just escape HTML and convert newlines
+            html_content = content.replace('<', '&lt;').replace('>', '&gt;').replace('\n', '<br>')
 
         # Complete chat wrapper with label and bubble
         st.markdown(f"""
@@ -711,7 +821,7 @@ def chat_interface():
                 <span>{label_text}</span>
             </div>
             <div class="chat-bubble {role}">
-                {safe_content}
+                {html_content}
             </div>
         </div>
         """, unsafe_allow_html=True)
