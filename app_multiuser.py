@@ -1180,18 +1180,18 @@ def chat_interface():
 
                 st.markdown(f"""
                 <div style="background-color: {'#ffffff' if role == 'user' else '#ffffff'};
-                            padding: 20px;
-                            border-radius: 12px;
-                            margin: 15px 0;
-                            border: 3px solid {'#1976d2' if role == 'user' else '#424242'};
-                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                    <p style="color: #000000 !important;
-                              font-size: 17px;
-                              line-height: 1.7;
-                              margin: 0;
-                              font-weight: 500;
-                              font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
-                        {safe_content}
+                                     padding: 20px;
+                                     border-radius: 12px;
+                                     margin: 15px 0;
+                                    border: 3px solid {'#1976d2' if role == 'user' else '#424242'};
+                                     box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                           <p style="color: #000000 !important;
+                                     font-size: 17px;
+                                       line-height: 1.7;
+                                    margin: 0;
+                                    font-weight: 500;
+                                     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                              {safe_content}
                     </p>
                 </div>
                 """, unsafe_allow_html=True)
